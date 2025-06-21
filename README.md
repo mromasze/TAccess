@@ -1,4 +1,4 @@
-Simple Telegram bot for sellers of different type of goods.
+Simple Telegram bot for sellers of different type of goods, with user friendly web UI made with Java Spring.
 
 Currently supporting:
 - Data selling (it can be whatever you want: links, some valuable informations, etc.)
