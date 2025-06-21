@@ -9,5 +9,6 @@ Currently supported payment methods:
 - PayPal
 - CryptoGate
 
-[!WARNING]  Project in progress, not ready to being used.
+> [!WARNING]
+> Project in progress, not ready to being used.
 
