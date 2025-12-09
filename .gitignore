@@ -1,0 +1,27 @@
+# IntelliJ
+.idea/
+*.iml
+*.iws
+
+# Maven
+target/
+.mvn/wrapper/maven-wrapper.properties
+
+# Docker & Database
+pgdata/
+*.log
+
+# Environment variables & secrets
+.env
+
+# MacOS
+.DS_Store
+
+# Frontend
+frontend/node_modules/
+frontend/build/
+frontend/.env
+frontend/.env.local
+frontend/.env.development.local
+frontend/.env.test.local
+frontend/.env.production.local

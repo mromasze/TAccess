@@ -1,0 +1,37 @@
+{
+  "app_title": "TAccess Panel",
+  "menu": {
+    "dashboard": "Pulpit",
+    "products": "Produkty",
+    "settings": "Ustawienia",
+    "logout": "Wyloguj"
+  },
+  "products": {
+    "title": "Zarządzanie Produktami",
+    "add_new": "Dodaj Produkt",
+    "edit": "Edytuj",
+    "delete": "Usuń",
+    "name": "Nazwa",
+    "price": "Cena",
+    "type": "Typ",
+    "active": "Aktywny",
+    "channel_id": "ID Kanału",
+    "duration": "Dni trwania",
+    "content": "Treść",
+    "save": "Zapisz",
+    "cancel": "Anuluj",
+    "confirm_delete": "Czy na pewno chcesz usunąć ten produkt?",
+    "types": {
+      "CHANNEL_ACCESS": "Dostęp do Kanału",
+      "TEXT": "Treść Tekstowa"
+    }
+  },
+  "settings": {
+    "title": "Ustawienia Bota",
+    "save_success": "Ustawienia zapisane",
+    "save_error": "Błąd zapisu"
+  },
+  "footer": {
+    "powered_by": "Powered by"
+  }
+}

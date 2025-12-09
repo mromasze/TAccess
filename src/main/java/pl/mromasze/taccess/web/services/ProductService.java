@@ -1,6 +1,5 @@
 package pl.mromasze.taccess.web.services;
 
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import pl.mromasze.taccess.bot.entity.product.Product;
 import pl.mromasze.taccess.bot.repository.ProductRepository;
@@ -8,9 +7,12 @@ import pl.mromasze.taccess.bot.repository.ProductRepository;
 import java.util.List;
 
 @Service
-@RequiredArgsConstructor
 public class ProductService {
     private final ProductRepository productRepository;
+
+    public ProductService(ProductRepository productRepository) {
+        this.productRepository = productRepository;
+    }
 
     public List<Product> getAllProducts() {
         return productRepository.findAll();
