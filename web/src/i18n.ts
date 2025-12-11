@@ -11,7 +11,10 @@ i18n
       en: { translation: en },
       pl: { translation: pl },
     },
-    lng: 'pl', // Default language
+    lng: (() => {
+      const userLang = navigator.language || (navigator.languages && navigator.languages[0]);
+      return userLang && userLang.startsWith('pl') ? 'pl' : 'en';
+    })(),
     fallbackLng: 'en',
     interpolation: {
       escapeValue: false,

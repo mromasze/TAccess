@@ -14,6 +14,10 @@ pgdata/
 # Environment variables & secrets
 .env
 
+# Generic build artifacts
+out/
+*.class
+
 # MacOS
 .DS_Store
 
@@ -25,3 +29,23 @@ frontend/.env.local
 frontend/.env.development.local
 frontend/.env.test.local
 frontend/.env.production.local
+
+# React app in /web
+web/node_modules/
+web/build/
+web/.env
+web/.env.local
+web/.env.development.local
+web/.env.test.local
+web/.env.production.local
+
+# Next.js site in /website
+website/node_modules/
+website/.next/
+website/out/
+website/.env
+website/.env.local
+website/.env.development.local
+website/.env.test.local
+website/.env.production.local
+website/Screenshot*.png
