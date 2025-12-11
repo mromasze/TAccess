@@ -49,5 +49,17 @@ export const AuthService = {
 
   isAuthenticated: () => {
     return !!localStorage.getItem('token');
+  },
+
+  authHeader: (): Record<string, string> => {
+    const user = localStorage.getItem('token');
+    if (user) {
+      return { 
+          'Authorization': 'Bearer ' + user,
+          'Content-Type': 'application/json' 
+      };
+    } else {
+      return { 'Content-Type': 'application/json' };
+    }
   }
 };

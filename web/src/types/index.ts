@@ -15,6 +15,7 @@ export interface BotSettingDTO {
 
 export interface UpdateSettingRequest {
   value: string;
+  description?: string;
   modifiedBy?: string;
 }
 

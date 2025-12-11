@@ -1,39 +1,15 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { ThemeProvider, createTheme, CssBaseline } from '@mui/material';
+import { ThemeProvider } from '@mui/material/styles';
+import CssBaseline from '@mui/material/CssBaseline';
 import Login from './components/Login';
-import PrivateRoute from './components/PrivateRoute';
 import DashboardLayout from './layouts/DashboardLayout';
 import ProductsPage from './pages/ProductsPage';
 import SettingsPage from './pages/SettingsPage';
-import './i18n';
-
-const theme = createTheme({
-  palette: {
-    mode: 'light',
-    primary: {
-      main: '#1976d2',
-    },
-    background: {
-      default: '#f5f5f5',
-    },
-  },
-  typography: {
-    fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
-    h4: {
-      fontWeight: 600,
-    },
-  },
-  components: {
-    MuiButton: {
-      styleOverrides: {
-        root: {
-          textTransform: 'none',
-        },
-      },
-    },
-  },
-});
+import PaymentsPage from './pages/PaymentsPage';
+import PrivateRoute from './components/PrivateRoute';
+import theme from './theme';
+import './App.css';
 
 function App() {
   return (
@@ -43,17 +19,12 @@ function App() {
         <Routes>
           <Route path="/login" element={<Login />} />
           
-          <Route path="/" element={
-            <PrivateRoute>
-              <DashboardLayout />
-            </PrivateRoute>
-          }>
-            <Route index element={<SettingsPage />} />
-            <Route path="settings" element={<SettingsPage />} />
+          <Route path="/" element={<PrivateRoute><DashboardLayout /></PrivateRoute>}>
+            <Route index element={<Navigate to="/products" replace />} />
             <Route path="products" element={<ProductsPage />} />
+            <Route path="payments" element={<PaymentsPage />} />
+            <Route path="settings" element={<SettingsPage />} />
           </Route>
-
-          <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </Router>
     </ThemeProvider>

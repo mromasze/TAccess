@@ -29,7 +29,7 @@ export default function Header() {
           animate={{ opacity: 1, y: 0 }}
           className="hidden md:flex items-center gap-8 bg-dark-card/50 px-6 py-2 rounded-full border border-dark-border/50 backdrop-blur-md"
         >
-          {['features', 'installation', 'pricing'].map((item) => (
+          {['features', 'installation', 'changelog', 'pricing'].map((item) => (
             <a 
               key={item}
               href={`#${item}`} 

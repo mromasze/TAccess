@@ -6,12 +6,15 @@ import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.TelegramBotsApi;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.DeleteMessage;
+import org.telegram.telegrambots.meta.api.objects.InputFile;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
+import pl.mromasze.taccess.bot.dto.PaymentResponse;
 import pl.mromasze.taccess.bot.entity.BotSettings;
 import pl.mromasze.taccess.bot.enums.SettingType;
 import pl.mromasze.taccess.bot.handlers.CommandHandler;
@@ -21,6 +24,7 @@ import pl.mromasze.taccess.bot.repository.ProductRepository;
 import pl.mromasze.taccess.bot.services.BotSettingsService;
 import pl.mromasze.taccess.bot.services.LanguageService;
 
+import java.io.ByteArrayInputStream;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
@@ -194,34 +198,141 @@ public class TelegramBot extends TelegramLongPollingBot {
         InlineKeyboardMarkup markup = new InlineKeyboardMarkup();
         List<List<InlineKeyboardButton>> keyboard = new ArrayList<>();
 
+        String currency = botSettingsService.getValue(SettingType.STORE_CURRENCY);
+        if (currency == null || currency.isEmpty()) {
+            currency = "USD";
+        }
+
         if (products.isEmpty()) {
             message.setText(languageService.getMessage(chatId, "products.empty"));
         } else {
             message.setText(languageService.getMessage(chatId, "products.available"));
 
-        for (Product product : products) {
-            List<InlineKeyboardButton> row = new ArrayList<>();
-            InlineKeyboardButton productButton = new InlineKeyboardButton();
-            productButton.setText(product.getName() + " - " + product.getPrice() + " BTC");
-            productButton.setCallbackData("buy_product_" + product.getId());
-            row.add(productButton);
-            keyboard.add(row);
+            for (Product product : products) {
+                List<InlineKeyboardButton> row = new ArrayList<>();
+                InlineKeyboardButton productButton = new InlineKeyboardButton();
+                productButton.setText(product.getName() + " - " + product.getPrice() + " " + currency);
+                productButton.setCallbackData("buy_product_" + product.getId());
+                row.add(productButton);
+                keyboard.add(row);
+            }
         }
+
+        List<InlineKeyboardButton> backRow = new ArrayList<>();
+        InlineKeyboardButton backButton = new InlineKeyboardButton();
+        backButton.setText(languageService.getMessage(chatId, "products.back"));
+        backButton.setCallbackData("action_main_menu");
+        backRow.add(backButton);
+        keyboard.add(backRow);
+
+        markup.setKeyboard(keyboard);
+        message.setReplyMarkup(markup);
+
+        execute(message);
     }
 
-    List<InlineKeyboardButton> backRow = new ArrayList<>();
-    InlineKeyboardButton backButton = new InlineKeyboardButton();
-    backButton.setText(languageService.getMessage(chatId, "products.back"));
-    backButton.setCallbackData("action_main_menu");
-    backRow.add(backButton);
-    keyboard.add(backRow);
 
-    markup.setKeyboard(keyboard);
-    message.setReplyMarkup(markup);
+    public void sendPaymentMethodSelection(Long chatId, Integer messageIdToDelete, Long orderId, List<pl.mromasze.taccess.bot.services.payment.PaymentProcessor> methods) throws TelegramApiException {
+        if (messageIdToDelete != null) {
+            deleteMessage(chatId, messageIdToDelete);
+        }
 
-    execute(message);
-}
+        SendMessage message = new SendMessage();
+        message.setChatId(chatId.toString());
+        message.setText(languageService.getMessage(chatId, "payment.select_method"));
 
+        InlineKeyboardMarkup markup = new InlineKeyboardMarkup();
+        List<List<InlineKeyboardButton>> keyboard = new ArrayList<>();
+
+        for (pl.mromasze.taccess.bot.services.payment.PaymentProcessor method : methods) {
+            List<InlineKeyboardButton> row = new ArrayList<>();
+            InlineKeyboardButton button = new InlineKeyboardButton();
+            button.setText(method.getMethodName()); // e.g. "STRIPE", "CRYPTO"
+            button.setCallbackData("pay_method_" + orderId + "_" + method.getMethodName());
+            row.add(button);
+            keyboard.add(row);
+        }
+        
+        // Cancel button
+        List<InlineKeyboardButton> row = new ArrayList<>();
+        InlineKeyboardButton cancelButton = new InlineKeyboardButton();
+        cancelButton.setText(languageService.getMessage(chatId, "general.cancel"));
+        cancelButton.setCallbackData("action_main_menu");
+        row.add(cancelButton);
+        keyboard.add(row);
+
+        markup.setKeyboard(keyboard);
+        message.setReplyMarkup(markup);
+
+        execute(message);
+    }
+
+    public void sendCryptoNetworkSelection(Long chatId, Integer messageIdToDelete, Long orderId, List<String> networks) throws TelegramApiException {
+        if (messageIdToDelete != null) {
+            deleteMessage(chatId, messageIdToDelete);
+        }
+
+        SendMessage message = new SendMessage();
+        message.setChatId(chatId.toString());
+        message.setText("Select Crypto Network:"); // Should be localized really
+
+        InlineKeyboardMarkup markup = new InlineKeyboardMarkup();
+        List<List<InlineKeyboardButton>> keyboard = new ArrayList<>();
+
+        for (String network : networks) {
+            List<InlineKeyboardButton> row = new ArrayList<>();
+            InlineKeyboardButton button = new InlineKeyboardButton();
+            button.setText(network.toUpperCase());
+            button.setCallbackData("pay_crypto_" + orderId + "_" + network);
+            row.add(button);
+            keyboard.add(row);
+        }
+
+        List<InlineKeyboardButton> backRow = new ArrayList<>();
+        InlineKeyboardButton backButton = new InlineKeyboardButton();
+        backButton.setText(languageService.getMessage(chatId, "general.cancel"));
+        backButton.setCallbackData("action_main_menu");
+        backRow.add(backButton);
+        keyboard.add(backRow);
+
+        markup.setKeyboard(keyboard);
+        message.setReplyMarkup(markup);
+
+        execute(message);
+    }
+
+    public void sendPaymentInfo(Long chatId, Integer messageIdToDelete, PaymentResponse response) throws TelegramApiException {
+        if (messageIdToDelete != null) {
+            deleteMessage(chatId, messageIdToDelete);
+        }
+
+        InlineKeyboardMarkup markup = new InlineKeyboardMarkup();
+        List<List<InlineKeyboardButton>> keyboard = new ArrayList<>();
+        List<InlineKeyboardButton> row = new ArrayList<>();
+        InlineKeyboardButton backButton = new InlineKeyboardButton();
+        backButton.setText(languageService.getMessage(chatId, "products.back"));
+        backButton.setCallbackData("action_main_menu");
+        row.add(backButton);
+        keyboard.add(row);
+        markup.setKeyboard(keyboard);
+
+        if (response.isHasPhoto()) {
+            SendPhoto photo = new SendPhoto();
+            photo.setChatId(chatId.toString());
+            photo.setCaption(response.getText());
+            photo.setParseMode("Markdown"); // Use Markdown for monospace
+            photo.setPhoto(new InputFile(new ByteArrayInputStream(response.getQrCodeImage()), "qrcode.png"));
+            photo.setReplyMarkup(markup);
+            execute(photo);
+        } else {
+            SendMessage message = new SendMessage();
+            message.setChatId(chatId.toString());
+            message.setText(response.getText());
+            message.enableHtml(true); // Keep HTML for non-QR messages
+            message.setReplyMarkup(markup);
+            execute(message);
+        }
+    }
 
     private void deleteMessage(Long chatId, Integer messageId) throws TelegramApiException {
         DeleteMessage deleteMessage = new DeleteMessage();

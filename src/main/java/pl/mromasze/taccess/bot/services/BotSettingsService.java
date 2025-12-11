@@ -31,9 +31,17 @@ public class BotSettingsService {
     }
 
     public void setValue(SettingType settingType, String value, String modifiedBy) {
+        updateSetting(settingType, value, null, modifiedBy);
+    }
+
+    public void updateSetting(SettingType settingType, String value, String description, String modifiedBy) {
         BotSettings settings = botSettingsRepository.findById(settingType.getKey())
                 .orElse(new BotSettings(settingType, null, modifiedBy));
+        
         settings.setSettingValue(value);
+        if (description != null) {
+            settings.setCustomDescription(description);
+        }
         settings.setModifiedBy(modifiedBy);
         botSettingsRepository.save(settings);
     }

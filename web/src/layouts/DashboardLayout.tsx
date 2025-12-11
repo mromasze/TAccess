@@ -21,7 +21,8 @@ import {
     ShoppingCart as ProductsIcon,
     Settings as SettingsIcon,
     Logout as LogoutIcon,
-    Language as LanguageIcon
+    Language as LanguageIcon,
+    AttachMoney as PaymentsIcon
 } from '@mui/icons-material';
 import { useNavigate, useLocation, Outlet } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
@@ -67,19 +68,27 @@ const DashboardLayout: React.FC = () => {
             <Divider />
             <List>
                 <ListItem disablePadding>
-                    <ListItemButton selected={location.pathname === '/'} onClick={() => navigate('/')}>
-                        <ListItemIcon>
-                            <SettingsIcon />
-                        </ListItemIcon>
-                        <ListItemText primary={t('menu.settings')} />
-                    </ListItemButton>
-                </ListItem>
-                <ListItem disablePadding>
                     <ListItemButton selected={location.pathname === '/products'} onClick={() => navigate('/products')}>
                         <ListItemIcon>
                             <ProductsIcon />
                         </ListItemIcon>
                         <ListItemText primary={t('menu.products')} />
+                    </ListItemButton>
+                </ListItem>
+                <ListItem disablePadding>
+                    <ListItemButton selected={location.pathname === '/payments'} onClick={() => navigate('/payments')}>
+                        <ListItemIcon>
+                            <PaymentsIcon />
+                        </ListItemIcon>
+                        <ListItemText primary="Transactions" />
+                    </ListItemButton>
+                </ListItem>
+                <ListItem disablePadding>
+                    <ListItemButton selected={location.pathname === '/settings'} onClick={() => navigate('/settings')}>
+                        <ListItemIcon>
+                            <SettingsIcon />
+                        </ListItemIcon>
+                        <ListItemText primary={t('menu.settings')} />
                     </ListItemButton>
                 </ListItem>
             </List>

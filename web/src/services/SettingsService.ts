@@ -1,6 +1,7 @@
-import { ApiResponse, BotSettingDTO, UpdateSettingRequest } from '../types';
+import { ApiResponse, BotSettingDTO } from '../types';
+import { AuthService } from './AuthService';
 
-const API_URL = '/api/settings';
+const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:8080/api';
 
 const getAuthHeader = (): Record<string, string> => {
     const token = localStorage.getItem('token');
@@ -13,7 +14,7 @@ export const SettingsService = {
       const headers: Record<string, string> = {
           ...getAuthHeader()
       };
-      const response = await fetch(API_URL, { headers });
+      const response = await fetch(`${API_URL}/settings`, { headers });
       if (!response.ok) {
         throw new Error(`Error: ${response.status}`);
       }
@@ -24,26 +25,24 @@ export const SettingsService = {
     }
   },
 
-  updateSetting: async (settingType: string, value: string): Promise<ApiResponse<BotSettingDTO>> => {
-    try {
-      const request: UpdateSettingRequest = { value, modifiedBy: 'admin' };
-      const headers: Record<string, string> = {
-          'Content-Type': 'application/json',
-          ...getAuthHeader()
-      };
-      const response = await fetch(`${API_URL}/${settingType}`, {
-        method: 'PUT',
-        headers,
-        body: JSON.stringify(request),
-      });
-
-      if (!response.ok) {
-        throw new Error(`Error: ${response.status}`);
-      }
-      return await response.json();
-    } catch (error) {
-      console.error(`Failed to update setting ${settingType}`, error);
-      throw error;
-    }
-  }
+    updateSetting: async (settingType: string, value: string, description?: string): Promise<ApiResponse<BotSettingDTO>> => {
+        const response = await fetch(`${API_URL}/settings/${settingType}`, {
+            method: 'PUT',
+            headers: AuthService.authHeader(),
+            body: JSON.stringify({ value, description }),
+        });
+        return handleResponse(response);
+    },
 };
+
+async function handleResponse(response: Response) {
+    const text = await response.text();
+    const data = text && JSON.parse(text);
+    
+    if (!response.ok) {
+        const error = (data && data.message) || response.statusText;
+        return Promise.reject(error);
+    }
+
+    return data;
+}

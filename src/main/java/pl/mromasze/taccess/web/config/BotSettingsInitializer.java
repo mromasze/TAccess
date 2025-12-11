@@ -36,6 +36,15 @@ public class BotSettingsInitializer {
                 return "false";
             case MIN_PAYMENT:
                 return "10.00";
+            case STORE_CURRENCY:
+                return "USD";
+            case CRYPTO_PAY_CURRENCY:
+                return "usdttrc20";
+            case CRYPTO_AVAILABLE_CURRENCIES:
+                return "btc,eth,ltc,usdttrc20,trx";
+            case STRIPE_ENABLED:
+            case CRYPTO_ENABLED:
+                return "false";
             default:
                 return "";
         }

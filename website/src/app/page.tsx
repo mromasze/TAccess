@@ -7,6 +7,7 @@ import Header from '@/components/Header';
 import Hero from '@/components/Hero';
 import Features from '@/components/Features';
 import Installation from '@/components/Installation';
+import Changelog from '@/components/Changelog';
 import Pricing from '@/components/Pricing';
 import Footer from '@/components/Footer';
 
@@ -30,6 +31,7 @@ export default function Home() {
           <Hero />
           <Features />
           <Installation />
+          <Changelog />
           <Pricing />
           <Footer />
         </main>

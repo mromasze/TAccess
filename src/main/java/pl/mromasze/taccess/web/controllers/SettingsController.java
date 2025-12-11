@@ -84,7 +84,7 @@ public class SettingsController {
             SettingType type = SettingType.valueOf(settingType);
             String modifiedBy = request.getModifiedBy() != null ? request.getModifiedBy() : "admin";
 
-            botSettingsService.setValue(type, request.getValue(), modifiedBy);
+            botSettingsService.updateSetting(type, request.getValue(), request.getDescription(), modifiedBy);
 
             BotSettings updated = botSettingsService.getSetting(type).orElse(null);
             return ResponseEntity.ok(ApiResponse.success("Setting updated successfully",
@@ -122,8 +122,15 @@ public class SettingsController {
         dto.setSettingValue(settings.getSettingValue());
         dto.setLastModified(settings.getLastModified());
         dto.setModifiedBy(settings.getModifiedBy());
-        dto.setDescription(settings.getSettingType() != null ?
+        
+        // Use custom description if available, otherwise fallback to enum description
+        if (settings.getCustomDescription() != null && !settings.getCustomDescription().isEmpty()) {
+            dto.setDescription(settings.getCustomDescription());
+        } else {
+            dto.setDescription(settings.getSettingType() != null ?
                 settings.getSettingType().getDescription() : null);
+        }
+        
         dto.setValueType(settings.getSettingType() != null ?
                 settings.getSettingType().getValueType() : null);
         return dto;
@@ -155,10 +162,15 @@ public class SettingsController {
 
     public static class UpdateSettingRequest {
         private String value;
+        private String description;
         private String modifiedBy;
 
         public String getValue() {
             return value;
+        }
+        
+        public String getDescription() {
+            return description;
         }
 
         public String getModifiedBy() {

@@ -17,6 +17,9 @@ public class BotSettings {
     @Enumerated(EnumType.STRING)
     private SettingType settingType;
 
+    @Column(columnDefinition = "TEXT")
+    private String customDescription;
+
     private LocalDateTime lastModified;
 
     private String modifiedBy;
@@ -35,6 +38,7 @@ public class BotSettings {
         this.settingType = settingType;
         this.settingValue = settingValue;
         this.modifiedBy = modifiedBy;
+        this.customDescription = settingType.getDescription();
     }
 
     public String getSettingKey() {
@@ -59,6 +63,14 @@ public class BotSettings {
 
     public void setSettingType(SettingType settingType) {
         this.settingType = settingType;
+    }
+    
+    public String getCustomDescription() {
+        return customDescription;
+    }
+
+    public void setCustomDescription(String customDescription) {
+        this.customDescription = customDescription;
     }
 
     public LocalDateTime getLastModified() {
