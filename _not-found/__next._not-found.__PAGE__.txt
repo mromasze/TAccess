@@ -1,0 +1,6 @@
+1:"$Sreact.fragment"
+2:I[22016,["/TAccess/_next/static/chunks/77b8431b935f83cb.js","/TAccess/_next/static/chunks/247eb132b7f7b574.js","/TAccess/_next/static/chunks/bf0931b61d7f1049.js"],""]
+3:I[97367,["/TAccess/_next/static/chunks/77b8431b935f83cb.js","/TAccess/_next/static/chunks/247eb132b7f7b574.js"],"OutletBoundary"]
+4:"$Sreact.suspense"
+0:{"buildId":"3v-Szz9Gan4gqCw1rYlFI","rsc":["$","$1","c",{"children":[["$","div",null,{"className":"flex min-h-screen flex-col items-center justify-center p-24 text-center","children":[["$","h2",null,{"className":"text-3xl font-bold mb-4","children":"Not Found"}],["$","p",null,{"className":"mb-4","children":"Could not find requested resource"}],["$","$L2",null,{"href":"/","className":"text-blue-500 hover:text-blue-700 underline","children":"Return Home"}]]}],[["$","script","script-0",{"src":"/TAccess/_next/static/chunks/bf0931b61d7f1049.js","async":true}]],["$","$L3",null,{"children":["$","$4",null,{"name":"Next.MetadataOutlet","children":"$@5"}]}]]}],"loading":null,"isPartial":false}
+5:null
